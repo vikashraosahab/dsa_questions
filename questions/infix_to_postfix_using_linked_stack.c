@@ -26,14 +26,9 @@ int main(int argc, char *argv[]) {
   printf("\nEnter infix expression : ");
   fgets(infix_exp, MAXSIZE, stdin);
   infix_exp[strcspn(infix_exp, "\n")] = '\0'; // REPLACE NEW LINE WITH NULL
-  top = push (top,'a');
-  top = push (top,'b');
-  top = push (top,'c');
-  top = print (top);
-  top = pop (top);
-  printf ("\n%c",peek (top));
-  top = print (top);
+
   printf ("\nPostfix expression are : ");
+  infix_to_postfix (infix_exp,postfix_exp);
   puts (postfix_exp);
   return 0; // TERMINATION
 }
@@ -64,13 +59,17 @@ STACK *pop(STACK *top) { // POP ELEMENT FROM THE STACK
   }
   return top;
 }
-STACK *print(STACK *top) { // FUNCTION THAT PRINT ALL ELEMENTS OF THE STACK
+STACK *print(STACK *top)
+{ // FUNCTION THAT PRINT ALL ELEMENTS OF THE STACK
   if (top == NULL) {
     printf("\nStack is empty ? ");
-  } else {
+  } 
+  else
+  {
     STACK *ptr = top;
     printf("\nElement of the node are : ");
-    while (ptr != NULL) {
+    while (ptr != NULL) 
+    {
       printf("%c ", ptr->exp);
       ptr = ptr->next;
     }
@@ -82,7 +81,6 @@ char peek (STACK *top) // GET TOPMOST ELEMENT OR NODE OF THE LINKED LIST
   if (top == NULL)
   {
    printf ("\nStack is empty ? ");
-   exit (1);
   }
   return top->exp;
 }
@@ -105,26 +103,27 @@ void infix_to_postfix (char *infix,char *postfix) // FUNCITON THAT CONVERT INFIX
       if (top == NULL)
       {
         printf ("\nStack is empty now !");
+        return;
       }
-      top = push (top,infix [i]);
+      top = pop (top);
     }
     else if (isdigit (infix [i]) || isalpha (infix [i]))
     {
       postfix [j++] = infix [i];
     }
-    else if (infix [i] == '+' || infix [i] == '-' || infix [i] == '*' || infix [i] == '-')
+    else if (infix [i] == '+' || infix [i] == '-' || infix [i] == '*' || infix [i] == '/')
     {
       while (top != NULL && top->exp != '(' && getPriority (top->exp) > getPriority (infix [i]))
       {
         postfix [j++] = peek (top);
         top = pop (top); // REMOVE NODE FROM THE TOP MOST LINKED LIST
       }
-     top = pop (top);
+     top = push (top,infix[i]);
     }
     else
     {
       printf ("\nIn-valid expression !");
-      exit (1); // TERMINATE THAT PROGRAM HERE
+      return;
     }
     i = i + 1; // INCREMENT BY 1 
   }
@@ -134,6 +133,7 @@ void infix_to_postfix (char *infix,char *postfix) // FUNCITON THAT CONVERT INFIX
      top = pop (top);
   }
   postfix [j] = '\0'; // ASSIGN NULL OPERATOR AT THE END OF THE POSTFIX
+  return;
 }
 int getPriority (char ch)
 {
