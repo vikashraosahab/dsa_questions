@@ -1,146 +1,82 @@
-// PROGRAM THAT CONVERT INFIX TO POSTFIX USING LINKED STACK
-#include <ctype.h>
-#include <malloc.h>
+// PROGRAM THAT CONVERT INFIX EXPRESSION INTO POSTIFX EXPRESSION
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <string.h>
+#include <ctype.h>
+#include <malloc.h>
 
 #define MAXSIZE 30
 typedef char EXP;
-typedef struct stack {
-  EXP exp;            // EXPERIANCE
-  struct stack *next; // POINTER THAT POINTING TO THE NEXT POINTER
+typedef struct listnode
+{
+  EXP ch;
+  struct listnode *next; // NEXT POINTER THAT POINTED TO THE NEXT NODE
 } STACK;
-STACK *top = NULL; // DECLARATION OF THE TOP LINKED OF THE LINKED LIST
-STACK *make_node(STACK *, char);
-STACK *push(STACK *, EXP); // METHOD THAT PUSH ELEMENT FROM THE STACK
-STACK *pop(STACK *); // METHOD THAT POP ELEMENT FROM THE STACK
+STACK *top = NULL; // ASSIGN NULL TO THE TOP OF THE listnode
+STACK *make_node (char);
+STACK *push (STACK *,char);
+STACK *pop (STACK *);
 char peek (STACK *);
-STACK *print(STACK *); // PRINT ELEMENT OF THE STACK
-void infix_to_postfix (char *,char *); // INFIX TO POSTFIX 
-int getPriority (char); // GET PRIORITY OF THE OPERATOR BASED ON THEIR PRECEDENCE 
 
 // MAIN FUNCTION OF THE PROGRAM
-int main(int argc, char *argv[]) {
-  char infix_exp[MAXSIZE], postfix_exp[MAXSIZE];
-  printf("\nEnter infix expression : ");
-  fgets(infix_exp, MAXSIZE, stdin);
-  infix_exp[strcspn(infix_exp, "\n")] = '\0'; // REPLACE NEW LINE WITH NULL
+int main (int argc, char *argv[]) 
+{
+  top = push (top,'a');
+  top = push (top,'b');
+  top = push (top,'e');
+  top = push (top,'c');
+  top = pop (top);
+  printf ("%c",top->ch); 
+  return 0;
+}
+STACK *make_node (char ch)
+{
+  STACK *node = (STACK *) malloc (sizeof (STACK));
+  if (node == NULL)
+  {
+    printf ("\nThere is no memory allocated for the ");
+  }
+  else 
+    node->ch = ch;
 
-  printf ("\nPostfix expression are : ");
-  infix_to_postfix (infix_exp,postfix_exp);
-  puts (postfix_exp);
-  return 0; // TERMINATION
+  return node;
 }
-STACK *push(STACK *top, EXP ch) { // PUSH ELEMENT IN THE STACK AT THE TOP OF THE STACK
-  STACK *node = (STACK *)malloc(sizeof(STACK));
-  node->next = NULL;
-  if (top == NULL) {
-    top = node;
-  } else {
-    node->next = top->next;
-    top->next = node;
-  }
-  return top;
-}
-STACK *pop(STACK *top) { // POP ELEMENT FROM THE STACK
-  char ch;
+STACK *push (STACK *top,char ch) // METHOD OF PUSHING NEW NODE IN THE LINKED LIST
+{
+  STACK *new_node = make_node (ch); 
   if (top == NULL)
   {
-    printf("\nStack is empty ? ");
+    top = new_node;
+    new_node->next = NULL;
   }
-  else
+  else 
   {
-    STACK *ptr;
-    ptr = top;
-    top = top->next;
-    free (ptr);
-    ptr = top;
+   new_node->next = top;
+   top = new_node;
+   
   }
   return top;
 }
-STACK *print(STACK *top)
-{ // FUNCTION THAT PRINT ALL ELEMENTS OF THE STACK
-  if (top == NULL) {
-    printf("\nStack is empty ? ");
-  } 
-  else
-  {
-    STACK *ptr = top;
-    printf("\nElement of the node are : ");
-    while (ptr != NULL) 
-    {
-      printf("%c ", ptr->exp);
-      ptr = ptr->next;
-    }
-  }
-  return top;
-}
-char peek (STACK *top) // GET TOPMOST ELEMENT OR NODE OF THE LINKED LIST
+STACK *pop (STACK *top) // REMOVE TOPMOST ELEMENT FROM THE STACK
 {
+  if (top != NULL)
+  {
+   STACK *ptr = top->next;
+   free (top);
+   top = ptr;
+  }
+  else 
+    printf ("\nStack is empty ? ");
+ 
+  return top;
+}
+char peek (STACK *top) // GET TOPMOST ELEMENT FROM THE STACK
+ {
   if (top == NULL)
   {
-   printf ("\nStack is empty ? ");
+   printf ("\nStack is empty !");
+    exit (1); // TERMINATE
   }
-  return top->exp;
-}
-void infix_to_postfix (char *infix,char *postfix) // FUNCITON THAT CONVERT INFIX EXPRESSION INTO POSTFIX EXPRESSION USING STACK
-{
-  int i = 0,j = 0;
-  while (infix [i] != '\0')
-  {
-    if (infix  [i] == '(')
-    {
-     top = push (top,infix [i]);
-    }
-    else if (infix [i] == ')')
-    {
-      while (top != NULL && top->exp != '(' )
-      {
-        postfix [j++] = peek (top);
-        top = pop (top); // REMOVE TOPMOST OF THE NODE
-      }
-      if (top == NULL)
-      {
-        printf ("\nStack is empty now !");
-        return;
-      }
-      top = pop (top);
-    }
-    else if (isdigit (infix [i]) || isalpha (infix [i]))
-    {
-      postfix [j++] = infix [i];
-    }
-    else if (infix [i] == '+' || infix [i] == '-' || infix [i] == '*' || infix [i] == '/')
-    {
-      while (top != NULL && top->exp != '(' && getPriority (top->exp) > getPriority (infix [i]))
-      {
-        postfix [j++] = peek (top);
-        top = pop (top); // REMOVE NODE FROM THE TOP MOST LINKED LIST
-      }
-     top = push (top,infix[i]);
-    }
-    else
-    {
-      printf ("\nIn-valid expression !");
-      return;
-    }
-    i = i + 1; // INCREMENT BY 1 
-  }
-  while (top != NULL && top->exp != '(')
-  {
-     postfix [j++] = peek (top);
-     top = pop (top);
-  }
-  postfix [j] = '\0'; // ASSIGN NULL OPERATOR AT THE END OF THE POSTFIX
-  return;
-}
-int getPriority (char ch)
-{
-  if (ch == '*' || ch == '/' || ch == '%')
-   return 2;
-  else if (ch == '+' || ch == '-')
-   return 1;
-  else
-   return 0;
+  return top->ch;
 }
