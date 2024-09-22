@@ -27,9 +27,10 @@ int main (int argc, char *argv[])
 {
   char infix [MAXSIZE], postfix [MAXSIZE];
   printf ("\nEnter expression : ");
-  scanf ("%s",infix);
+  fgets (infix,MAXSIZE,stdin);
+  infix [strcspn (infix,"\n")] = '\0';
   infix_to_prefix (infix,postfix);
-  printf ("%c",peek(top));
+ // printf ("%c",peek(top));
   puts (postfix);
   return 0;
 }
@@ -51,6 +52,7 @@ STACK *push (STACK *top,char value) // THIS IS FUNCTION METHOD IS USED FOR PUSH 
    if (top == NULL)
   {
       top = new_node;
+      new_node->next = NULL;
   }
   else 
   {
@@ -96,7 +98,7 @@ void infix_to_prefix (char *infix,char *postifx) // FUNCTION THAT  PERFORM CONVE
     }
     else if (infix [i] == ')')
     {
-     while (peek (top) != '(')
+     while (top != NULL && top->ch!= '(')
      {
       postifx [j++] = peek (top);
       top = pop (top);
@@ -110,11 +112,11 @@ void infix_to_prefix (char *infix,char *postifx) // FUNCTION THAT  PERFORM CONVE
     }
     else if (isdigit (infix[i]) || isalpha (infix [i]))
     {
-      top = push (top,infix [i]);
+      postifx [j++] = infix [i];
     }
     else if (infix [i] == '+' || infix [i] == '-' || infix [i] == '*' || infix [i] == '/')
     {
-      while (peek (top) != '(' && getPriority (top->ch) > getPriority (infix[i]))
+      while (top != NULL && top->ch != '(' && getPriority (peek (top)) < getPriority (infix[i]))
       {
         postifx [j++] = peek (top);
         top = pop (top);
@@ -128,7 +130,7 @@ void infix_to_prefix (char *infix,char *postifx) // FUNCTION THAT  PERFORM CONVE
     }
     i = i + 1;
   }
-  while (peek (top) != '(')
+  while (top != NULL && top->ch != '(')
   {
     postifx [j++] = peek (top);
     top = pop (top);
