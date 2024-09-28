@@ -20,26 +20,27 @@ int isStackFull (STACK *);
 int isStackEmpty (STACK *);
 void reverse (char *,char *);
 void infix_to_postfix (STACK *,char *, char *);
-STACK push (STACK *,char);
-STACK pop (STACK *);
-int peek (STACK *);
+void push (STACK *,char);
+void pop (STACK *);
+char peek (STACK *);
 int getPriority (char);
 
 // MAIN FUNCTION OF THE PROGRAM 
 int main (int argc, char *argv[])
 {
-    STACK stack;
-    STACK *stackPtr = &stack; // STACK VARIABLE DECLARATIONS
-    char infix [MAXSIZE], postfix [MAXSIZE],reversed_exp [MAXSIZE];
+    STACK stack;// STACK VARIABLE DECLARATIONS
+    char infix [MAXSIZE], postfix [MAXSIZE],reversed_exp [MAXSIZE],prefix_exp [MAXSIZE];
     printf ("\nEnter your expression are : ");
     fgets (infix,MAXSIZE,stdin); // TAKE INPUT USER AND STORE INFIX EXPRESSION VARIABLE
     infix [strcspn (infix,"\n")] = '\0'; // REMOVE NEWLINE CHARACTER BY USING NULL
     int length = sizeof (infix) / sizeof (infix [0]); // GET TOTAL NUMBER OF CHARACTER IN THE STRING 
-    initialized (stackPtr); // INITIALIZED STACK TOP AS - 1
+    initialized (&stack); // INITIALIZED STACK TOP AS - 1
     reverse (infix,reversed_exp); // REVERSE THE INFIX EXPRESSION
-    infix_to_postfix (stackPtr,infix,postfix);
-    reverse (postfix,infix);
-    printf ("\nPrefix expression are : %s",infix);
+    puts (reversed_exp);
+    infix_to_postfix (&stack,infix,postfix);
+    printf ("%s",postfix);
+    reverse (postfix,prefix_exp);
+    printf ("\nPrefix expression are : %s",prefix_exp);
     return 0;
 }
 void initialized (STACK *top) // INITIALIZATION OF THE STACK AS TOP IS -1
@@ -48,11 +49,11 @@ void initialized (STACK *top) // INITIALIZATION OF THE STACK AS TOP IS -1
 }
 int isStackFull (STACK *s) // FUNCTION COMPONENT THAT CHECK STACK IS FULLLED
 {
-   return s->top;
+   return s->top = MAXSIZE;
 }
 int isStackEmpty (STACK *s) // FUNCTION COMPONENT THAT CHECK STACK IS EMPTY OR NOT EMPTY
 {
-    return s->top;
+    return s->top = -1;
 }
 void reverse (char *infix , char *reversed_exp) // FUNCTION COMPONENT THAT REVERSE INFIX EXPRESSION
 {
@@ -74,28 +75,29 @@ void reverse (char *infix , char *reversed_exp) // FUNCTION COMPONENT THAT REVER
    }
    reversed_exp [j] = '\0';
 }
-STACK push (STACK *S,char ch) // PUSH DATA ELEMENT AT THE TOP OF THE STACK
+void push (STACK *S,char ch) // PUSH DATA ELEMENT AT THE TOP OF THE STACK
 {
     if (isStackFull(S))
     {
-        printf ("\nStack is empty ? ");
+        printf ("\n STACK IS FULLED NOW ! ");
         exit (1); // TERMINATE
-    }
+    }   
     else 
-     S->stack[++S->top] = ch;
+     S->stack[++S->top] = ch;   
 }
-STACK pop (STACK *S) // REMOVE ELEMNT FROM THE STACK
+void pop (STACK *S) // REMOVE ELEMNT FROM THE STACK
 {
     if (isStackEmpty (S))
     {
         printf ("\nStack is fulled now !");
         exit (1);
     }
-    S->stack[S->top--];
+    else 
+     S->stack[S->top--];
 }
-int peek (STACK *S) // GET TOPMOST ELEMENT FROM THE STACK
+char peek (STACK *S) // GET TOPMOST ELEMENT FROM THE STACK
 {
-    if (isStackEmpty (S))
+    if (isStackEmpty (S) == -1)
     {
         printf ("\nStack is fulled now !");
         exit (1);
@@ -113,17 +115,17 @@ void infix_to_postfix (STACK *s,char *infix,char *postfix) // CONVERSION OF THE 
         {
          while (s->top != -1 && s->stack [s->top] != '(')
          {
-            postfix [j++] = peek (s); // INSERT TOPMOST ELEMENT FROM THE STACK 
-            pop (s); // REMOVE TOPMOST ELEMENT FROM THE STACK
+           postfix [j++] = peek (s); // INSERT TOPMOST ELEMENT FROM THE STACK 
+           pop (s); // REMOVE TOPMOST ELEMENT FROM THE STACK
          }
          if (s->top == -1)
          {
             printf ("\nStakc is empty !");
             exit (1);
          }
-         pop (s); // REMOVE OTHER ELEMENTS FROM THE STACK
+          pop (s); // REMOVE OTHER ELEMENTS FROM THE STACK
         }
-       else if (isdigit (infix [i]) && isalpha (infix [i]))
+       else if (isdigit (infix [i]) || isalpha (infix [i]))
        {
         postfix [j++] = infix [i];
        }
