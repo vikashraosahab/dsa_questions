@@ -14,7 +14,7 @@ int pop (char []); // POP METHOD IS USED TO REMOVE DATA FROM THE STACK OF THE AR
 void infix_to_prefix (char *, char *); // CONVERT INFIX TO PREFIX EXPRESSION 
 void reverse (char *,char *);
 int getPriority (char);
-
+int evaluation_exp (char *);
 // MAIN FUNCTION OF THE PROGRAM
 int main (int argc, char * argv[])
 {
@@ -29,6 +29,8 @@ int main (int argc, char * argv[])
     reverse (postfix,infix);
     puts ("\nPrefix expression are : ");
     puts (infix);
+    int result = evaluation_exp (infix);
+    printf ("\nResult are : %d",result);
     return 0;
 }
 void push (char stack [],char ch) // PUSH METHOD IS USED PUSH DATA ELEMENT IN THE STACK ARRAY AT THE TOP POSITION
@@ -120,4 +122,41 @@ void infix_to_prefix (char *infix,char *postfix)
             postfix [j++] = pop (stack);
      }
      postfix [j] = '\0';
+}
+int evaluation_exp (char *str)
+{
+    int result;
+    int length = strlen (str) - 1;
+    while (str [length] >= 0)
+    {
+       if (str [length] == '+' || str [length] == '*' || str [length] == '/' || str [length] == '-')
+       {
+        int val1 = pop (stack);
+        int val2 = pop (stack);
+        switch (str [length])
+        {
+          case '+':
+            result = val1 + val2;
+            break;
+          case '-':
+            result = val1 - val2;
+            break;
+          case '*':
+            result = val1 * val2;
+            break;
+          case '/':
+            result = val1 / val2;
+            break;
+        }
+
+        push (stack,result);
+       }
+       else 
+       {
+        push (stack,str[length]);
+       }
+       length = length - 1;
+    }
+
+    return result;
 }
