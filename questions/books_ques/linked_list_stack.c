@@ -62,7 +62,6 @@ int main (int argc, char * argv[])
          printf ("\nLinked list is create now !");
          break;
         case 2:
-         printf ("\nLinked list element are displaying now : \n");
          isStackEmpty (top) == true ? printf ("\nStack is empty ? ")
          :print (top);
          break;
