@@ -133,7 +133,7 @@ int bottom (int *queue)
 }
 void print (int *queue) // DISPLAY EACH CHARACTER FOR THE QUEUE 
 {
-  if (front == -1 && front >= rear) // WHEN QUEUE IS EMPTY (UNDERFLOW CONDITION)
+  if (front == -1 || front >= rear) // WHEN QUEUE IS EMPTY (UNDERFLOW CONDITION)
     printf ("\nQueue is empty now !");
   else 
   {
