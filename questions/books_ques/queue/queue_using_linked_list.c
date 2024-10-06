@@ -34,8 +34,7 @@ void menu_bar (); // FOR SHOWING MENU BAR
 int main (int argc, char * argv[]) {
     int value; // VALUE FOR STORE VALIDATE INPUT THAT GIVE USER
     QUEUE *q = create_queue (); // FOR CREATION OF THE QUEUE IN THE MEMORY
-    while (1) {
-       
+    while (1) {     
        menu_bar (); // CALL FUNCTION THAT SHOW OUPUT PROMPT THAT HELP USER'S TO PERFORM THEIR OPERATION
        value = valid_input (); // CALLING VALID_INPUT THAT HAVE VALIDATED INPUT FROM THE USER AS INTEGER
        if (value == 6) break;
