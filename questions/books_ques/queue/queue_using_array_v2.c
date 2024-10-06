@@ -7,8 +7,12 @@
 #include <stdbool.h>
 
 // MACROS DEFINITION FOR THE CONSTANT DEFINITION
-#define MAX_SIZE 5
-#define EMPTY -1
+typedef enum {
+  FULLED,
+  EMPTY,
+  MAX_SIZE = 5,
+} MESSAGE;
+MESSAGE m;
 typedef struct { // DECLARATION OF THE STRUCTURE
   int queue [MAX_SIZE];
   int front;
