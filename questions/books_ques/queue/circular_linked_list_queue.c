@@ -1,93 +1,162 @@
-// CREATE CIRCULAR LINKED LIST QUEUE 
+// CREATE A QUEUE USING LINKED LIST 
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 
-// ENUMERATION FOR VALIDATION MESSAGE
 typedef enum {
     EMPTY = 1,
     NOT_EMPTY = 0,
-} MESSAGE;
-
-MESSAGE M; // VARIABLE DECLARATION FOR THE ENUMBERATION STRUCTURE NAME
-typedef struct node { // STRUCTURE FOR CREATING A PARTICULAR NODE 
+}MESSAGE;
+MESSAGE m; // GLOBALLY DECLARATION OF THE ENUMBERATION VARIABLES
+typedef struct node {
     int value;
-    struct node *next; // NEXT POINTER 
+    struct node *next;
 }Node;
-typedef struct queue { // STRUCTURE THAT DEFINE QUEUE ADT
-    Node *front,*rear;
-}Queue; 
-// FUNCTION PROTOTYPE
-Queue *queue = NULL; // DECLARATION AND DEFINITION A NULL QUEUE ADT
-void initialized_queue (Queue *); // INITIALIZED QUEUE ADT IN THE MEMORY
-void menu_bar ();  // DISPLAY MENU BAR
-void process_menu (Queue *,int); // DISPLAY PROCESS BAR 
-int valid_input (); // VALID INPUT THAT ENTER BY USER
-int empty (Queue *); // CHECK THAT QUEUE IS EMPTY OR NOT
-int peek (Queue *); // GET VALUE OF THE TOP OF THE QUEUE
-int bottom (Queue *); // GET VALUE OF THE BOTTOM OF THE QUEUE
-Node *make_node (int); // CREATE A NODE THAT STORE PARTICULAR INFORMATION 
-Queue *enqueue (Queue *,int); // INSERTION PERFORM FROM THE REAR SIDE OF THE QUEUE
-Queue *dequeue (Queue *); // DELETION FROM FRONT SIDE OF THE QUEUE
-void display (Queue *q); // DISPLAY EACH VALUE OF THE QUEUE
 
-// MAIN FUNCTION OF THE PROGRAM 
-int main (int argc, char * argv[]) {
-    
-   // initialized_queue (queue); // FUNCTION THAT INITIALIZED QUEUE 
-    int value;
+typedef struct queue {
+  Node *front,*rear;
+} Queue;
+
+void menu  ();
+void process_menu (Queue *,int);
+int valid_input ();
+void create_queue (Queue *);
+int queue_empty (Queue *);
+Node *make_node (int);
+void enqueue (Queue *,int);
+void dequeue (Queue *);
+int peek (Queue *);
+int bottom (Queue *);
+void display (Queue *);
+
+// MAIN FUNCTION 
+int main (void) {
+    Queue *q = (Queue *) malloc (sizeof (Queue));
+    create_queue (q); // CREATE QUEUE
+    int val;
     while (1) {
-        menu_bar (); // MENU BAR
-        value = valid_input (); // CALLING VALID_INPUT FUNCTION FOR VALIDATION INTEGER ONLY
-        if (value == 6) break;  // BREAK THE LOOP 
-        process_menu (queue,value); // PROCESS CALLING EXECUTE EACH TASK ACCORDING 
+        menu ();
+        val = valid_input ();
+        if (val == 6) break;
+        process_menu (q,val);
     }
-    printf ("\nExit the program !");
     return 0;
 }
-void initialized_queue (Queue *q) {
-  if (queue == NULL) {
-    q->front = q->front = NULL;
-  }
+void menu () { // DISPLAY MENU CART
+    printf ("\n************ MENU BAR ***********");
+    printf ("\nEnter : 1 for insertion : ");
+    printf ("\nEnter : 2 for deletion : ");
+    printf ("\nEnter : 3 front side value : ");
+    printf ("\nEnter : 4 rear side value : ");
+    printf ("\nEnter : 5 display : ");
+    printf ("\nEnter : 6 for exit : ");
+    printf ("\nEnter task according main menu : ");
 }
-void menu_bar () { // FOR DISPLAY MENU OUTPUT PROMPT
-    printf ("\n************** MENU BAR ****************");
-    printf ("\n1 : Insertion\n2 : Deletion\n3 : Peek\n4 : Bottom \n5 : Display\n6 : EXIT");
-    printf ("\nEnter task according to the menu bar : ");
-}
-int valid_input () {// THIS FUNCTION ALLOW ONLY INTEGER VALUE OTHERWISE ASK RE-ENTER VALUE TO USER
-  int val;
+int valid_input () { // VALID INPUT FOR INTEGER , ONLY INTEGER ARE VALID
+  int value;
   while (1) {
-    if (scanf ("%d",&val) != 1) {  // CHECK INPUT IS INTEGER OR OTHER DATA TYPE
-        while (getchar () != '\n'); // NEW_LINE CHARACTER ISN'T CONSIDER AS RIGTH OR WRONG NOT SHOW ERROR PROMPT WHEN ENCOUTNER WITH NEWLIEN
-         printf ("\nEntered input is valid. Re-enter input : ");
-        continue; 
-    } 
-    else  // IF INPUT IS ALREADY INTEGER THEN BREAK THE REPEATION AND RETRUN VALUE 
-      break;
+    if (scanf ("%d",&value) != 1) {
+        while (getchar () != '\n')
+         printf ("\nIn-valid input. Please enter valid input : ");
+        continue;
+    }
+    else 
+     break;
   }
-  return val;
+  return value;
 }
-void process_menu (Queue *queue,int task) {// EXECUTE THE PROGRAM ACCORDING TO THE USER ENTER
+void process_menu (Queue *q,int task) {// PERFORM TASK ACCORDING MENU 
   switch (task) {
     case 1:
-     printf ("\nInsertion is in process.........");
-     printf ("\nEnter value that you want to be inserted : ");
-     int value = valid_input ();
-    
-     printf ("\nDone !");
-     break;
+      printf ("\nInsert node in the queue : ");
+      int val = valid_input ();
+      enqueue (q,val);
+      printf ("\nvalue %d is inserted now !\nDone !");
+      break;
     case 2:
-     printf ("%d",empty (queue));
-     break;
+      queue_empty (q) == EMPTY ?
+      printf ("\nQueue is empty !")
+      : printf ("\nDeletion node from the queue : ");
+      dequeue (q);
+      printf ("\nDone !");
+      break;
     case 3:
+      queue_empty (q) == EMPTY ?
+      printf ("\nQueue is empty !")
+      : printf ("%d is the peek value ",peek (q));
+      break;
     case 4:
+        queue_empty (q) == EMPTY ?
+      printf ("\nQueue is empty !")
+      : printf ("%d is the bottom value ",bottom (q));
+      break;
     case 5:
+      queue_empty (q) == EMPTY ?
+      printf ("\nQueue is empty !")
+      : display (q);
+      break;
   }
 }
-int empty (Queue *q) { // FUNCTION THAT CHECK THAT EMPTY 
-  if (q == NULL)
-    return EMPTY;
-  else 
-    return NOT_EMPTY;
+void create_queue (Queue *q) {
+    q->front == NULL;
+    q->rear == NULL;
+}
+int queue_empty (Queue *q) {
+    if (q->front == NULL)
+      return EMPTY;
+    else 
+      return NOT_EMPTY;
+}
+Node *make_node (int value) {// CREATE NODE 
+ Node *new_node = (Node *) malloc (sizeof (Node));
+ if (new_node != NULL) {
+   new_node->value = value;
+ }
+ else {
+    printf ("\nNode is not allocated !");
+ }
+ return new_node;
+}
+void enqueue (Queue *q,int val) {/// INSERTION NEW NODE IN THE QUEUE 
+ Node *node = make_node (val);
+ if (node != NULL) {
+    if (queue_empty (q)) {
+        q->front = q->rear = node;
+        q->rear->next = q->front;
+    }
+    else {
+        q->rear->next = node;
+        q->rear = node;
+        q->rear->next = q->front;
+    }
+ }
+}
+void dequeue (Queue *q) {
+    if (queue_empty (q)) {
+        printf ("\nQueue is already empty");
+        return;
+    }
+    Node *ptr = q->front;
+    if (q->front == q->rear ) {
+        q->front = NULL;
+        q->rear = NULL;
+    }
+    else {
+        q->front = q->front->next;
+    }
+    free (ptr); 
+}
+int peek (Queue *q) {
+    Node *ptr = q->rear;
+    return ptr->value;
+}
+int bottom (Queue *q) {
+    Node *ptr = q->front;
+    return ptr->value;
+}
+void display (Queue *q) {
+    Node *ptr = q->front;
+    while (ptr != q->rear){
+        printf ("value : %d\n",ptr->value);
+        ptr = ptr->next;
+    }
 }
