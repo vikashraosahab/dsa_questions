@@ -9,17 +9,18 @@
 #include <math.h>
 
 typedef enum { //  TYPEDEFINTION ENUMBERATION DECLARAE
-  EMPTY,
-  NOT_EMPTY,
-  FULLED,
-  NOT_FULLED,
-  MAX_SIZE = 50,
+  EMPTY = 1,
+  NOT_EMPTY = 0,
+  FULLED = 1,
+  NOT_FULLED = 0,
+  MAX_SIZE = 5,
 } MESSAGE;
 MESSAGE M; // ENUMERATION VARIABLE DECLARATIONS
 
 typedef struct { // TYPEDEFINITION STRUCTURE DECLARATIONS WITH PRIORITY_QUEUE ARRAY AND FRONT AS WELL AS REAR VARIABLE LABEL
     int priority_queue [MAX_SIZE];
     int front,rear;
+    int count;
 } Queue;
 
 // FUNCTION PROTOTYPE THAT ALLOW USER 
@@ -54,6 +55,7 @@ int main (int argc, char * argv[]) {
   // FUNCTION PROTOTYPES
 void create_queue (Queue *q) {// CREATION QUEUE MEANS INITIALIZED - 1 TO FRONT AND REAR LABEL OF THE QUEUE
   q->rear = q->front = -1; // INITIALIZED - 1 TO BOTH REAR AS WELL AS FRONT
+  q->count = 0;
 }
 void show_menu () { // FOR SHOWING MENU RELATED PROMPTS TO THE SUER
    printf ("\n*********** MENU BAR *************");
@@ -85,21 +87,72 @@ void process_menu (Queue *q,int task) {// FUNCTION THAT PERFROM TASK ACCORDING U
      printf ("\nInsertion is in process........");
      printf ("\nEnter value that you want to insert in the queue : ");
      int value = valid_input (); // TAKE INPUT FROM THE USER
-
-     printf ("\nDone !");
+     enqueue (q,value); // PERFORM ENQUEUE FUNCTION THAT INSERT IN THE QUEUE 
+     printf ("\nValue %d is inserted..!",value);
      break;
     case 2:
      printf ("\nDeletion is in process..........");
-
      printf("\nDone !");
      break;
     case 3:
      
     case 4:
     case 5:
+     display (q);
      break;
     default :
      printf ("\nEntered value is not matched values with the menu bar values !");
     break;
+  }
+}
+int queue_empty (Queue *q) { // CHECK QUEUE IS EMPTY OR NOT 
+  if (q->front == -1 && q->rear == -1) 
+     return EMPTY;
+  else 
+    return NOT_EMPTY;
+}
+int queue_fulled (Queue *q) { // CHECK QUEUE IS FeLLED OR NOT 
+  if (q->front == 0 && q->rear == MAX_SIZE - 1)
+    return FULLED; // WHEN QUEUE ARRAY IS FULLED 
+  else 
+    return NOT_FULLED;
+}
+void enqueue (Queue *q, int value) { // INSERT NEW VALUE IN THE PRIORITY_QUEUE IN DESCENDING ORDER 
+  if (queue_fulled (q)) { // WHEN QUEUE GET FULLLED 
+    printf ("\nQueue is fulled now !");
+    return;
+  }
+  if (queue_empty (q)) {
+    q->front++,q->rear++;
+    q->priority_queue [q->rear] = value;
+    q->count++; // INCREMENT COUNT BY 1 
+  }
+  else {
+   int i = q->count - 1,k;
+   for (i; i >= 0; i--) {
+      if (q->priority_queue [i] > value)
+      {
+         k = i;
+         int j = q->count;
+         while (j >= k) {
+          q->priority_queue [j + 1] = q->priority_queue [j];
+          q->rear = j;
+        }
+        q->priority_queue [k] = value;
+        q->count++;
+        
+         break;
+      }
+    }
+  }
+}
+void display (Queue *q) {
+  if (queue_empty (q)) {
+    printf ("\nQueue is empty !");
+    return;
+  }
+  int i = q->front;
+  for (i; i >= q->rear; i++) {
+    printf ("%d",q->priority_queue [i]);
   }
 }
