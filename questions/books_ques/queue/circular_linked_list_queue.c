@@ -73,9 +73,7 @@ void process_menu (Queue *q,int task) {// PERFORM TASK ACCORDING MENU
       printf ("\nvalue %d is inserted now !\nDone !");
       break;
     case 2:
-      queue_empty (q) == EMPTY ?
-      printf ("\nQueue is empty !")
-      : printf ("\nDeletion node from the queue : ");
+      printf ("\nDeletion node from the queue : ");
       dequeue (q);
       printf ("\nDone !");
       break;
