@@ -95,7 +95,8 @@ void process_menu (Queue *q,int task) {// FUNCTION THAT PERFROM TASK ACCORDING U
      printf("\nDone !");
      break;
     case 3:
-     
+     printf ("%d",q->count);
+     break;
     case 4:
     case 5:
      display (q);
@@ -112,7 +113,7 @@ int queue_empty (Queue *q) { // CHECK QUEUE IS EMPTY OR NOT
     return NOT_EMPTY;
 }
 int queue_fulled (Queue *q) { // CHECK QUEUE IS FeLLED OR NOT 
-  if (q->front == 0 && q->rear == MAX_SIZE - 1)
+  if (q->front == 0 && q->rear == MAX_SIZE - 1 && q->count == MAX_SIZE)
     return FULLED; // WHEN QUEUE ARRAY IS FULLED 
   else 
     return NOT_FULLED;
@@ -128,20 +129,33 @@ void enqueue (Queue *q, int value) { // INSERT NEW VALUE IN THE PRIORITY_QUEUE I
     q->count++; // INCREMENT COUNT BY 1 
   }
   else {
-   int i = q->count - 1,k;
-   for (i; i >= 0; i--) {
-      if (q->priority_queue [i] > value)
-      {
-         k = i;
-         int j = q->count;
-         while (j >= k) {
-          q->priority_queue [j + 1] = q->priority_queue [j];
-          q->rear = j;
+    int k = q->count - 1;
+    for (k; k >= 0; k--) {
+      if (k == 0 && q->priority_queue [k] < value) {
+        int move = q->count;
+        while (move > 0) {
+          q->priority_queue [move] = q->priority_queue [move - 1];
+          move = move - 1;
         }
-        q->priority_queue [k] = value;
+        q->rear = q->count;
+        q->priority_queue [q->front] = value; // INSERT VALUE AT THE 0 TH POSITIONUUU
+        q->count = q->count + 1;// INCREMENT BY 1
+      }
+      else if (k == q->count - 1 && q->priority_queue [k] > value) {
+        q->rear++;
         q->count++;
-        
-         break;
+        q->priority_queue [q->rear] = value;
+        break;
+      }
+      else if (q->priority_queue [k] > value) {
+        int pos = k;
+        int move = q->rear++;
+        while (move > k) {
+          q->priority_queue [move] = q->priority_queue [move -1];
+          move = move - 1; // DECREMENT MOVE BY 1
+        }
+       q->priority_queue [pos + 1] = value;
+       q->count = q->count + 1; // INCREMENT TOTAL SIZE OF THE ARRAY BY 1
       }
     }
   }
@@ -152,7 +166,16 @@ void display (Queue *q) {
     return;
   }
   int i = q->front;
-  for (i; i >= q->rear; i++) {
-    printf ("%d",q->priority_queue [i]);
+  for (i; i <= q->rear; i++) 
+  {
+    printf ("Values : %d\n",q->priority_queue [i]);
   }
+ }
+int peek (Queue *q) {// GET VALUE THAT IS AT THE PEEK 
+  if (queue_empty (q)) {
+    printf ("\nQueue is empty !");
+    return EMPTY;
+  }  
+  
+  return q->priority_queue[q->rear];
 }
