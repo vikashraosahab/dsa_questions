@@ -81,6 +81,12 @@ int valid_input () {// INPUT VALIDATED FOR INTEGER ONLY
   }
   return value;
 }
+int queue_empty (Queue *q) {
+  return  (q->rear == -1 && q->front == -1) ? EMPTY : !EMPTY; 
+}// METHOD THAT CHECK QUEUE IS EMPTY OR NOT EMPTY
+int queue_fulled (Queue *q) {
+  return q->rear == MAX_SIZE -1 ? FULLED :!FULLED;
+}
 void process_menu (Queue *q,int task) {// FUNCTION THAT PERFROM TASK ACCORDING USER INPUT 
  switch (task) {
     case 1:
@@ -88,119 +94,80 @@ void process_menu (Queue *q,int task) {// FUNCTION THAT PERFROM TASK ACCORDING U
      printf ("\nEnter value that you want to insert in the queue : ");
      int value = valid_input (); // TAKE INPUT FROM THE USER
      enqueue (q,value); // PERFORM ENQUEUE FUNCTION THAT INSERT IN THE QUEUE 
-     printf ("\nValue %d is inserted..!",value);
+     queue_fulled(q) == 0 ? printf ("\nValue %d is inserted..!",value) : printf ("");
      break;
     case 2:
-     printf ("\nDeletion is in process..........");
-     dequeue (q);
+     printf ("\nDeletion is in process..........\n");
+     dequeue (q); // VALUE IS DELETED NOW !
      printf("\nDone !");
      break;
     case 3:
-     printf ("Peek value is %d ",peek (q));
+     printf ("Peek value is %d ",peek (q)); // GET VALUE AT THE TOP OF THE REAR
      break;
     case 4:
-     printf ("\nBotton value is %d",bottom (q));
+     printf ("\nBotton value is %d",bottom (q)); // GET VALUE AT THE TOP OF THE FRONT
      break;
     case 5:
-     display (q);
+    queue_empty (q) == 0 ? display (q) : printf ("\nQueue is empty !");
      break;
     default :
-     printf ("\nEntered value is not matched values with the menu bar values !");
+     printf ("\nEntered value is not matched values with the menu bar values !"); // USER PROMPT
     break;
   }
 }
-int queue_empty (Queue *q) { // CHECK QUEUE IS EMPTY OR NOT 
-  if (q->front == -1 && q->rear == -1 && q->count == 0) {
-    return EMPTY;
-  }
-  else 
-    return NOT_EMPTY;
-}
-int queue_fulled (Queue *q) { // CHECK QUEUE IS FeLLED OR NOT 
-  if (q->front == 0 && q->rear == MAX_SIZE - 1 && q->count == MAX_SIZE && (q->front = q->rear - 1 && q->rear == MAX_SIZE))
-    return FULLED; // WHEN QUEUE ARRAY IS FULLED 
-  else 
-    return NOT_FULLED;
-}
-void enqueue (Queue *q, int value) { // INSERT NEW VALUE IN THE PRIORITY_QUEUE IN DESCENDING ORDER 
-  if (queue_fulled (q)) { // WHEN QUEUE GET FULLLED 
-    printf ("\nQueue is fulled now !");
-    return;
-  }
-  if (queue_empty (q)) {
-    q->front++,q->rear++;
-    q->priority_queue [q->rear] = value;
-    q->count++; // INCREMENT COUNT BY 1 
-  }
-  else {
-    int k = q->count - 1;
-    for (k; k >= 0; k--) {
-      if (k == 0 && q->priority_queue [k] < value) {
-        int move = q->count;
-        while (move > 0) {
-          q->priority_queue [move] = q->priority_queue [move - 1];
-          move = move - 1;
-        }
-        q->rear = q->count;
-        q->priority_queue [q->front] = value; // INSERT VALUE AT THE 0 TH POSITIONUUU
-        q->count = q->count + 1;// INCREMENT BY 1
-      }
-      else if (k == q->count - 1 && q->priority_queue [k] > value) {
-        q->rear++;
-        q->count++;
-        q->priority_queue [q->rear] = value;
-        break;
-      }
-      else if (q->priority_queue [k] > value) {
-        int pos = k;
-        int move = q->rear++;
-        while (move > k) {
-          q->priority_queue [move] = q->priority_queue [move -1];
-          move = move - 1; // DECREMENT MOVE BY 1
-        }
-       q->priority_queue [pos] = value;
-       q->count = q->count + 1; // INCREMENT TOTAL SIZE OF THE ARRAY BY 1
-      }
+
+void enqueue(Queue *q, int value) {
+    // Check if the queue is full
+    if (queue_fulled(q)) {
+        printf("\nQueue is full! Cannot insert new value.\n");
+        return;
     }
-  }
+
+    // If the queue is empty, insert at position 0
+    if (queue_empty(q)) {
+        q->priority_queue[0] = value;  // INSERT AT THE O POSITION 
+        q->rear = q->front = 0; // INITIALIZING REAR AND FRONT WITH 0
+        return;
+    }
+
+    // Find the correct position to insert in descending order
+    int i;
+    for (i = q->rear; (i >= 0 && q->priority_queue[i] < value); i--) {
+        q->priority_queue[i + 1] = q->priority_queue[i];
+    }
+    
+    // Insert value at the found position
+    q->priority_queue[i + 1] = value;
+    q->rear++;
 }
-void display (Queue *q) {
-  if (queue_empty (q)) {
-    printf ("\nQueue is empty !");
+void dequeue (Queue *q) {
+  if (queue_empty (q)) { // WHEN QUEUE IS EMPTY 
+    printf ("\nQueue is empty !"); // OUTPUT PROMPT
     return;
   }
-  int i = q->front;
-  for (i; i <= q->rear; i++) 
-  {
-    printf ("Values : %d\n",q->priority_queue [i]);
-  }
- }
-int peek (Queue *q) {// GET VALUE THAT IS AT THE PEEK 
-  if (queue_empty (q)) {
-    printf ("\nQueue is empty !");
-    return EMPTY;
-  }  
-  
-  return q->priority_queue[q->rear];
+
+  int val = q->priority_queue [q->front]; // VALUE THAT WILL BE DELETED 
+    for (int i = q->front; i <= q->rear; i++) { // REPLACE FIST POSITION VALUES WITH MOVING ARRAY I - 1 POSITION
+      if (q->rear == 0 && q->front == 0) {
+        q->front = q->front - 1; // WHEN REAR AND FRONT IS EQUAL TO -1 OR NULL
+      }
+      else
+        q->priority_queue [i] = q->priority_queue [i + 1]; // insertion each i+ 1 with in i position values
+    }
+    q->rear = q->rear - 1; // DECREMENT REAR BY 1
+    printf ("value is %d deleted now !",val); // OUTPUT PROMPT
 }
+// PEEK VALUE OF THE ARRAY FROM THE REAR END 
+int peek (Queue *q) {
+  return q->priority_queue [q->rear];
+}
+// BOTTOM VALUE OF THE ARRAY FROM THE FRONT END
 int bottom (Queue *q) {
-  if (queue_empty (q)) {
-    printf ("\nQueue is empty now !");
-    return EMPTY;
-  }
   return q->priority_queue [q->front];
 }
-void dequeue (Queue *queue) {
-  if (queue_empty (queue) == EMPTY) {
-    printf ("\nQueue is empty");
-    return;
+void display (Queue *q) { // DISPLAY OR PRINTING EACH CHARACTER OF THE QUEUE ONE BY ONE 
+  printf ("\nElements are : ");
+  for (int i = q->front ; i <= q->rear; i++) { // START FROM FRONT TO REAR
+    printf ("%d,",q->priority_queue [i]); // DISPLAYING 
   }
-  int val = queue->priority_queue[queue->front];
-  queue->priority_queue [queue->front++];
-  queue->count +=-1; // DECREEMENT TOTAL SIZE OF THE QUEUE ELEMENTS
-  printf ("\n%d value is deleted now !",val);
-  if (queue->count == MAX_SIZE && queue->front == queue->rear) {
-    queue->rear = queue->front = -1;
-    printf ("\nQueue is completely deleted or cleaned !");
-  }
-}
+ }
