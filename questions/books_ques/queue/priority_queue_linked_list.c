@@ -3,9 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h> 
+
 // DEFINITION OF THE ENUMERATION FOR HANDLING ERRORS
 typedef enum {
-  EMPTY, // DATA MEMBER OF THE ENUMERATION DATA TYPE
+  EMPTY = 1, // DATA MEMBER OF THE ENUMERATION DATA TYPE
 }EXCEPTION; // NAME OF THE ENUMERATION TYPEDEFINE DATA TYPE
 EXCEPTION EXP; // VARIABLE DECLARATION OF THE EXCEPTION HANDLING 
 typedef struct node { // DECLARATION OF THE STRUCTURE FOR THE NODE THAT HAVE STORE DATA AND WRAP ALL DATA MEMBER AND LINKED POINTER TOGETHER IN THE MEMORY
@@ -25,8 +27,8 @@ void process_menu (Queue *,int); // PROCESS MENU METHOD USED FOR PERFORM TASK AC
 int input_int (); // INPUT_INT METHOD RESOLVE EXCEPTION LIKE ONLY INTEGER ALLOWED NO OTHER VALUE USER CAN ENTER 
 void create_queue (Queue *); // METHOD THAT CREATE QUEUE STRUCTURE IN THE MEMORY
 Node *make_node (); // MAKE PARTICULAR NODE THAT STORE IT'S OWN DATA MEMBERS
-void enqueu (Queue *); // METHOD THAT INSERT NEW ELEMENT FROM THE REAR SIDE
-void dequeu (Queue *); // METHOD THAT REMOVE OR DELETE NODE FROM THE FRONT SIDE 
+void enqueue (Queue *); // METHOD THAT INSERT NEW NODE IN THE LINKED LIST
+void dequeue (Queue *); // METHOD THAT REMOVE OR DELETE NODE FROM THE FRONT SIDE 
 void peek (Queue *); // GET VALUE OF THE QUEUE FROM THE REAR SIDE
 void bottom (Queue *); // GET VALUE OF THE QUEUE FROM THE FRONT SIDE
 bool queue_empty (Queue *); // METHOD THAT CHECK QUEUE IS EMPTY OR NOT EMPTY
@@ -34,14 +36,16 @@ void display_queue (Queue *); // METHOD THAT DISPLAY ALL DATA OF THE LINKED LIST
 // MAIN FUNCTION OF THE PROGRAM 
 // ENTRY POINT OF THE PROGRAM
 int main (int argc, char * argv[]) {
-  Queue *q;  // STRUCTURE POINTER VARIABLE DECLARATIONS
+  Queue q;  // STRUCTURE POINTER VARIABLE DECLARATIONS
+  create_queue (&q); // ALLOCATING MEMORY FOR THE QUEUE STRUCTURE
   int val;
   while (1) {
     menu (); // CALLING MENU METHOD FOR DISPLAYING EACH INSTRUCTIONS TO THE USER EVERY TIME
     val = input_int (); // INPUT PROMPT
     if (val == 6) break; // WHEN USER INPUT VALUE 6 THEN ACCORDING TO THE MENU TERMINATE THE LOOP
-    process_menu (q); // 
+    process_menu (&q,val); // 
   }
+  printf ("\nProgram is ended now !"); // END STATEMENT OF THE PROGRAM
   return 0; // TERMINATE
 }
 // FUNCTION PROTOTYPES
@@ -63,26 +67,135 @@ int input_int () { // VALID VALUE ONLY INTEGER ALLOWED
     else  // STOP LOOP WHEN USER ENTER RIGHT INPUT
       break;
   }
-  rturn value;
+  return value;
 }
 void process_menu (Queue *q,int task) { // METHOD THAT PERFORM USER INSTRUCTED OPERATIONS BASED ON MENU INSTRUCTION 
  switch (task) {
-    case 1:
+    case 1: // PERFORM INSERTION OR SECTION WHERE ENQUEUE METHOD CALLED 
      printf ("\nInsert new node in the linked list : ");
-
+     enqueue (q); // ENQUEUE METHOD CALLING 
      printf ("\nDone !");
     break;
-    case 2:
+    case 2: // SECTION WHERE DEQUEUE METHOD CALLED 
      printf ("\nDeletion of node is in process .........");
+     dequeue (q); // DEQUEUE METHOD IS CALLING 
      break;
     case 3:
+     peek (q); // CALLING PEEK METHOD 
      break;
     case 4:
+     bottom (q); // CALLING BOTTOM METHOD
      break;
     case 5:
+     display_queue (q); // DISPLAY QUEUE'S EACH ELEMENT ON THE SCREEN 
      break;
     default:
-     printf ("\nValue %d is not associated with any task in menu instructions !");
+     printf ("\nValue %d is not associated with any task in menu instructions !"); // OUTPUT PROMPT 
      break;
   }
+}
+void create_queue (Queue *q) { // METHOD THAT INITIALIZE REAR AND FRONT TO NULL SO THEY CAN ACTIVE FOR STORE DATA IN THE QUEUE
+  q->rear = NULL;
+  q->front = NULL;
+}
+bool queue_empty (Queue *q) { // METHOD THAT CHECK QUEUE IS EMPTY OR NOT EMPTY 
+  return (q->rear == NULL && q->front == NULL) ? EMPTY : !EMPTY;
+}
+Node *make_node () { // METHOD THAT HANDLES NODE CREATION FUNCTION
+  Node *node = (Node *) malloc (sizeof (Node)); // DYNAMIC MEMORY ALLOCATION
+  if (node != NULL) {
+    int val,tag;
+    printf ("\nEnter priority of the data : "); // OUTPUT PROMPT
+    tag = input_int (); //TAKE VALIDATED INPUT ONLY INTEGER ARE ALLOWED
+    getchar (); // GETCHAR HANDLES SEPARATION BETWEEN CHARARACTER AND INPUT CHARACTER
+    printf ("\nEnter data : ");
+    scanf ("%c",&val); // TAKE CHARACTER AS INPUT 
+    node->data = val;
+    node->priority_tag = tag;
+    node->next = NULL;
+    node->pre = NULL;
+  }
+  else {
+    printf ("\nNo dynamic memory allocated for the node !");
+  }
+  return node;
+}
+void enqueue (Queue *q) { // METHOD THAT INSERT NODE IN THE LINKED
+  Node *new_node = make_node (); // MAKE_NODE HANDLES INSERT VALUE AND PRIORITY TAG IN THE NODE DATA SECTIONS AND ALSO INSERT BOTH POINTER PRE AND NEXT
+  if (queue_empty (q)) { // WHEN LINKED LIST IS EMPTY 
+    q->rear = q->front = new_node;
+    q->rear->next = NULL;
+    q->front->pre = NULL;
+  }
+  else { // INSERT NODE WHEN THERE IS AT LEAST ONE NODE AREADY AVAIABLE IN THE LINKED LIST
+    Node *node = q->front, *pre = NULL; // INITIALIZE TWO NODE FIRST NODE AND PRE AND INITIALIZE THEM WITH 
+    while (node != NULL && node->priority_tag < new_node->priority_tag) {
+      pre = node; // PRE STORE PREVIOUS POSITION OF THE CURRENT POSITION NODE
+      node = node->next; // INCREMENT NODE POSITION IN ORDER OF N O(n) TIME COMPLEXITY
+    }
+    if (pre == NULL) {
+      new_node->next = q->front;
+      if (q->front != NULL) {
+        new_node->pre = pre;
+      }
+      q->front = new_node;
+    }
+    else {
+      new_node->next = node;
+      new_node->pre = pre;
+      pre->next = new_node;
+      if (node != NULL) {
+        node->pre = new_node;
+      }
+    }
+  }
+}
+void peek (Queue *q) { // PRINT VALUE THAT IS AT THE TOP OF THE QUEUE 
+  if (queue_empty (q)) { // WHEN EVER QUEUE IS EMPTY 
+    printf ("\nQueue is empty !"); 
+    return;
+  }
+  printf ("\nData of the node at is the rear : \n");
+  Node *node = q->rear; // GET POSITION OF THE PEEK OF THE QUEUE MEANS POSITION OF THE REAR 
+  printf ("Priority tag : %d",node->priority_tag);
+  printf ("\nData of the queue : %c",node->data);
+}
+void bottom (Queue *q) { // PRINT VALUE OF NODE THAT IS AT THE FRONT POSITION 
+ if (queue_empty (q)) { // CHECK QUEUE IS EMPTY OR NOT EMPTY
+    printf ("\nQueue is empty !");
+    return;
+  }
+  printf ("\nData of the node at is the front : ");
+  Node *node = q->front; // GET POSITION OF THE BOTTOM OF THE QUEUE 
+  printf ("\nPriority tag : %d",node->priority_tag);
+  printf ("\nData of the queue : %c",node->data);
+}
+void display_queue (Queue *q) { // METHOD THAT DISPLAY EACH NODE DATA 
+ if (queue_empty (q)) { // CHECK QUEUE IS EMPTY 
+    printf ("\nQueue is empty !");
+    return;
+  }
+  printf ("\nDisplay each node data : "); // OUTPUT PROMPT
+  Node *node = q->front; // SET FRONT POSITION OF THE QUEUE 
+  while (node != NULL) {
+    printf ("\nPriority : %d \nData : %c",node->priority_tag,node->data);
+    node = node->next; // INCREMENT NODE UNTIL NODE NOT REACH AT THE REAR POSITION
+  }
+}
+void dequeue (Queue *q) { // METHOD THAT REMOVE NODE FORM THE FRONT OF THE LINKED LIST 
+  if (queue_empty (q)) { // CHECK THAT QUEUE IS EMPTY OR NOT EMPTY
+    printf ("\nQueue is empty !");
+    return;
+  }
+  Node *node = q->front;
+  if (q->front == q->rear) {
+    q->front = NULL;
+    q->rear = NULL;
+  }
+  else {
+    q->front = q->front->next; // POINTED FRONT TO NEXT NODE IN THE LINKED LIST
+    q->front->pre = NULL; 
+  }
+  printf ("\nPriority %d value is deleted node !",node->priority_tag);
+  free (node); // FREE HANDLES DELETION OF NODE AUTOMATICALLY FROM THE QUEUE
 }
