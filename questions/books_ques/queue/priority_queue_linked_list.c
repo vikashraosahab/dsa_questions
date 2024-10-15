@@ -33,6 +33,7 @@ void peek (Queue *); // GET VALUE OF THE QUEUE FROM THE REAR SIDE
 void bottom (Queue *); // GET VALUE OF THE QUEUE FROM THE FRONT SIDE
 bool queue_empty (Queue *); // METHOD THAT CHECK QUEUE IS EMPTY OR NOT EMPTY
 void display_queue (Queue *); // METHOD THAT DISPLAY ALL DATA OF THE LINKED LIST
+Queue display_reverse_queue (Queue *); // METHOD THAT DISPLAY QUEUE LINKED LIST DATA FROM THE REVERSE 
 // MAIN FUNCTION OF THE PROGRAM 
 // ENTRY POINT OF THE PROGRAM
 int main (int argc, char * argv[]) {
@@ -69,7 +70,9 @@ int input_int () { // VALID VALUE ONLY INTEGER ALLOWED
   }
   return value;
 }
-void process_menu (Queue *q,int task) { // METHOD THAT PERFORM USER INSTRUCTED OPERATIONS BASED ON MENU INSTRUCTION 
+void process_menu (Queue *q,int task) { 
+  // METHOD THAT PERFORM USER INSTRUCTED OPERATIONS BASED ON MENU INSTRUCTION 
+  Queue queues;
  switch (task) {
     case 1: // PERFORM INSERTION OR SECTION WHERE ENQUEUE METHOD CALLED 
      printf ("\nInsert new node in the linked list : ");
@@ -87,7 +90,22 @@ void process_menu (Queue *q,int task) { // METHOD THAT PERFORM USER INSTRUCTED O
      bottom (q); // CALLING BOTTOM METHOD
      break;
     case 5:
-     display_queue (q); // DISPLAY QUEUE'S EACH ELEMENT ON THE SCREEN 
+    start:printf ("\n1 : FROM front\n2 : FROM REAR\n3 : Exit\n");
+     int task;
+     task = input_int ();
+     if (task == 3) break; // STOP LOOP
+     switch (task) {
+        case 1:
+         display_queue (q);
+         break;
+        case 2:
+         queues = display_reverse_queue (q);
+         break;
+        default:
+         printf ("\nValue not found !");
+         goto start;
+         break;
+      }
      break;
     default:
      printf ("\nValue %d is not associated with any task in menu instructions !"); // OUTPUT PROMPT 
@@ -144,8 +162,10 @@ void enqueue (Queue *q) { // METHOD THAT INSERT NODE IN THE LINKED
       new_node->next = node;
       new_node->pre = pre;
       pre->next = new_node;
+      q->rear = new_node;
       if (node != NULL) {
         node->pre = new_node;
+        q->rear = node;
       }
     }
   }
@@ -198,4 +218,16 @@ void dequeue (Queue *q) { // METHOD THAT REMOVE NODE FORM THE FRONT OF THE LINKE
   }
   printf ("\nPriority %d value is deleted node !",node->priority_tag);
   free (node); // FREE HANDLES DELETION OF NODE AUTOMATICALLY FROM THE QUEUE
+}
+Queue display_reverse_queue (Queue *q) {
+  if (queue_empty (q)) { // QUEUE IS EMPTY 
+    printf ("Queue is empty");
+  }
+  else {
+    Node *node = q->rear;
+    while (node != NULL) {
+      printf ("%d ",node->priority_tag);
+      node = node->pre;
+    }
+  }
 }
