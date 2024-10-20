@@ -15,6 +15,8 @@ class DeckQueue {
   DeckQueue &insert_front (DeckQueue &);
   DeckQueue &deletion_end (DeckQueue &);
   DeckQueue &deletion_front (DeckQueue &);
+  bool isQueueFull (DeckQueue &);
+  bool isQueueEmpty (DeckQueue &);
   DeckQueue &display ();
   // PRIVATE MODIFIERS MEMBERS ARE HIGHLY SECURED OR PROTECTED MEMBERS THAT NO OTHER PART OF THE CODE CAN ACCESS EXCEPT IT'S CLASS PUBLIC MEMBERS FUNCTIONS 
   // PRIVATE IS A MODIFIER THAT USED FOR DECLARATIONS OF THE PRIVATE DATA MEMBERS 

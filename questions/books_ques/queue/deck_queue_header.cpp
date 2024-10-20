@@ -2,12 +2,11 @@
 #include "deck_queue.h"
 #include <iostream>
 #define TASK 1 // SYMBOLIC CONSTANT 
+
 // CLASS CONSTRUCTOR DEFINITION
 DeckQueue::DeckQueue ():
-  left_insert (-1),
-  right_insert (-1),
-  right_delete (-1),
-  left_delete (-1) {
+  rear (-1),
+  front (-1) {
     while (1) {
       menu (TASK); // SHOW EACH USER PROMPT 
       int task = valid_input (); // TAKE VALD INPUT
