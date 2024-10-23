@@ -2,18 +2,27 @@
 #include "deck_queue.h"
 #include <iostream>
 #define TASK 1 // SYMBOLIC CONSTANT 
+#define MAXSIZE 10 // SYMBOLIC CONSTANT (MACROS CONSTANT)
 
 // CLASS CONSTRUCTOR DEFINITION
 DeckQueue::DeckQueue ():
   rear (-1),
   front (-1) {
-    while (1) {
-      menu (TASK); // SHOW EACH USER PROMPT 
-      int task = valid_input (); // TAKE VALD INPUT
-      if (task == 3) break; // STOP THE LOOP 
-      process_menu (task); // PERFORM TASK ACCORDING TO THE USER INPUT
-    }
+    std::cout << "\nProgram is in processing mode ............. \n";
+  }
+// CHECK , IS QUEUE IS FULLED OR NOT
+bool isQueueFull (DeckQueue & queue) {
+  if (queue.rear == MAXSIZE - 1 && queue.front == 0 || queue.rear == queue.front - 1)
+     return true;
+  else 
+     return false;
 }
+// CHECK, IS QUEUE IS EMPTY OR NOT EMPTY 
+// RETURN TRUE WHEN IT BECOME TRUE OTHERWISE RETURN FALSE 
+bool isQueueEmpty (DeckQueue & queue) {
+  return queue.rear == -1 && queue.front == -1;
+}
+
 // CLASS PSEUDO MEMBER FUNCTIONS
 DeckQueue& DeckQueue::display () {
     std::cout << "Hello,World by Vikash Yadav\n" << std::endl; // OUTPUT
@@ -59,11 +68,11 @@ void DeckQueue::menu (const int& task){
   }
 }
 // PROCESS MENU FUNCTION ACTUALLY TAKES INPUT AS PARAMENTER AND PERFORM ACCORDING TASK
-void DeckQueue::process_menu (const int& task) {
+void DeckQueue::process_menu (DeckQueue & queue, const int& task) {
    switch (task) {
      case 1:
        std::cout << "Input Restriction queue menu open : \n";
-         
+       std::cout << isQueueFull (queue);
        std::cout << "\nExisted Now !";
        break;
      case 2:

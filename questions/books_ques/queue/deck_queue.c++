@@ -11,6 +11,13 @@
 int main (int argc, char * argv[]) {
   // CLASS INSTANTIATION 
   DeckQueue obj; // CLASS OBJECT CREATION
+    while (1) {
+      menu (TASK); // SHOW EACH USER PROMPT 
+      int task = valid_input (); // TAKE VALD INPUT
+      if (task == 3) break; // STOP THE LOOP 
+      process_menu (&obj,task); // PERFORM TASK ACCORDING TO THE USER INPUT
+    }
+
   return 0;
 }
 
