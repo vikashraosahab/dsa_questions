@@ -78,16 +78,17 @@ Node *create_tree (Node *root,int value) {
 
    return root;
 }
+// RECURSIVELY TRAVERSE TREE IN THE PRE ORDER MANNER 
 Node pre_order (Node *tree) {
   Node *current = tree;
-  if (current != NULL) {
+  if (current != NULL) { // TERMINATE TRAVERSING WHEN CURRENT ENCOUNTER WITH LAST NODE OF THE TREE 
     printf ("\nValue : %d",current->data);
     pre_order (current->left);
     pre_order (current->right);
   }
 }
 
-Node in_order (Node *tree) {
+Node in_order (Node *tree) { // RECURSIVELY TRAVERSE TREE IN THE IN ORDER MANNER 
   Node *current = tree;
   if (current != NULL) {
     in_order (current->left);
@@ -96,7 +97,7 @@ Node in_order (Node *tree) {
   }
 }
 
-Node post_order (Node *tree) {
+Node post_order (Node *tree) { // RECURSIVELY TRAVERSE TREE IN THE POST ORDER MANNER 
   Node *current = tree;
   if (current != NULL) {
     post_order (current->left);
@@ -105,7 +106,7 @@ Node post_order (Node *tree) {
   }
 }
 
-void search_value (Node *tree,int value) {
+void search_value (Node *tree,int value) { // RECURSIVELY SEARCHING A TREE FOR KNOWING THERE IS VALUE IN THE TREE OR NOT IN THE TREE
   Node *current = tree;
   if (current == NULL) 
    printf ("\nValue isn't in the tree"), exit (-1);
